@@ -58,12 +58,11 @@ class Location:
         else:
             pass
 
-    def expand(self, amount: float) -> None:
+    def expand(self, amount: int) -> None:
         """Expand the location while keeping the center.
 
         Args:
-            amount (float): Amount to expand the location by in multiples of the original size.
-
+            amount (int): Amount of pixels to expand the location by.
 
         Returns:
             None
