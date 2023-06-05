@@ -110,3 +110,4 @@ models/
 outputs/
 tests/data/output/
 data/3dmm/
+data/qdrant_storage/

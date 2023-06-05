@@ -75,7 +75,8 @@ class FaceAnalyzer(object):
     @Timer("FaceAnalyzer.run", "{name}: {milliseconds:.2f} ms", logger=logger.debug)
     def run(
         self,
-        path_image: str,
+        path_image: str = "",
+        image = None,
         batch_size: int = 8,
         fix_img_size: bool = False,
         return_img_data: bool = False,
@@ -116,7 +117,7 @@ class FaceAnalyzer(object):
 
         self.logger.info("Running FaceAnalyzer")
         self.logger.info("Reading image", extra={"path_image": path_image})
-        data = self.reader.run(path_image, fix_img_size=fix_img_size)
+        data = self.reader.run(path_image=path_image, image=image, fix_img_size=fix_img_size)
         path_output = None if path_output == "None" else path_output
         data.path_output = path_output
 
@@ -146,7 +147,7 @@ class FaceAnalyzer(object):
         else:
             if "save" in self.utilizers:
                 self.utilizers["save"].run(data)
-
+                
         if not include_tensors:
             self.logger.debug(
                 "Removing tensors from response as include_tensors is False"
@@ -161,3 +162,4 @@ class FaceAnalyzer(object):
         else:
             self.logger.debug("Returning response with faces", extra=response.__dict__)
             return response
+    

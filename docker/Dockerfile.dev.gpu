@@ -6,7 +6,7 @@ WORKDIR $WORKDIR
 
 # Install base utilities
 RUN apt-get update && apt-get install -y \
-    apt-utils \
+    # apt-utils \
     wget \
     git \
     build-essential && \
@@ -39,7 +39,7 @@ RUN ln -s /opt/conda/envs/env/bin/pip /usr/bin/pip
 RUN pip install --upgrade pip
 
 # Install facetorch package
-COPY facetorch .
+# COPY facetorch .
 COPY environment.yml setup.py version README.md ./
 RUN pip install  --no-dependencies -e .
 

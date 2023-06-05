@@ -1,5 +1,7 @@
 import torch
 import torchvision
+import torchvision.transforms as transforms
+
 from codetiming import Timer
 from facetorch.base import BaseReader
 from facetorch.datastruct import ImageData
@@ -28,9 +30,13 @@ class ImageReader(BaseReader):
             device,
             optimize_transform,
         )
+        
+        self.tensor_transform = transforms.Compose([
+                  transforms.PILToTensor()
+              ])
 
     @Timer("ImageReader.run", "{name}: {milliseconds:.2f} ms", logger=logger.debug)
-    def run(self, path_image: str, fix_img_size: bool = False) -> ImageData:
+    def run(self, path_image: str = None, image = None, fix_img_size: bool = False) -> ImageData:
         """Reads an image from a path and returns a tensor of the image with values between 0-255 and shape (batch, channels, height, width). The order of color channels is RGB. PyTorch and Torchvision are used to read the image.
 
         Args:
@@ -40,10 +46,15 @@ class ImageReader(BaseReader):
         Returns:
             ImageData: ImageData object with image tensor and pil Image.
         """
-        data = ImageData(path_input=path_image)
-        data.img = torchvision.io.read_image(
-            data.path_input, mode=torchvision.io.ImageReadMode.RGB
-        )
+        if(image is not None):
+            data = ImageData(path_input="")
+            data.img = self.tensor_transform(image)
+        elif(path_image is not None):
+            data = ImageData(path_input=path_image)
+            data.img = torchvision.io.read_image(
+                data.path_input, mode=torchvision.io.ImageReadMode.RGB
+            )
+            
         data.img = data.img.unsqueeze(0)
         data.img = data.img.to(self.device)
 

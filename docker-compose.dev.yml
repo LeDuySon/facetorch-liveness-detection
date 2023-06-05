@@ -1,64 +1,81 @@
 version: "3.3"
 services:
-
   # Container for development purposes
-  facetorch-dev:
+  liveness-detection:
     platform: linux/amd64
+    # name: liveness-detector
     build:
       context: .
       dockerfile: ./docker/Dockerfile.dev
+    ports:
+      - "7860:7860"
     volumes:
       - ./:/opt/facetorch
+    # command: python3 ./scripts/app.py
     entrypoint: ["/bin/bash"]
+    networks:
+      - liveness-net
 
-  facetorch-dev-gpu:
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.dev.gpu
+  qdrant-db:
+    # name: vectordb
+    image: qdrant/qdrant
     volumes:
-      - ./:/opt/facetorch
-    shm_size: 8gb
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ['0']
-              capabilities: [ gpu ]
-    entrypoint: ["/bin/bash"]
+      - ./data/qdrant_storage:/qdrant/storage
+    networks:
+      - liveness-net
 
-  facetorch-tests:
-    platform: linux/amd64
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.tests
-    volumes:
-      - ./:/opt/facetorch
-    entrypoint: ["conda", "run", "--no-capture-output", "-n", "env", "pytest", "-v", "--cov=facetorch", "--cov-report=term", "--cov-fail-under=95"]
+networks:
+  liveness-net:
+    driver: bridge 
 
-  facetorch-dev-example:
-    platform: linux/amd64
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.dev
-    volumes:
-      - ./:/opt/facetorch
-    entrypoint: ["conda", "run", "--no-capture-output", "-n", "env", "python", "scripts/example.py"]
+  # facetorch-dev-gpu:
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/Dockerfile.dev.gpu
+  #   volumes:
+  #     - ./:/opt/facetorch
+  #   shm_size: 8gb
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             device_ids: ['0']
+  #             capabilities: [ gpu ]
+  #   entrypoint: ["/bin/bash"]
 
-  facetorch-lock:
-    platform: linux/amd64
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.lock
-    volumes:
-      - ./:/opt/facetorch
-    entrypoint: ["conda", "run", "--no-capture-output", "-n", "base", "conda-lock", "-p", "linux-64", "-f", "environment.yml", "--lockfile", "new.conda-lock.yml"]
+  # facetorch-tests:
+  #   platform: linux/amd64
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/Dockerfile.tests
+  #   volumes:
+  #     - ./:/opt/facetorch
+  #   entrypoint: ["conda", "run", "--no-capture-output", "-n", "env", "pytest", "-v", "--cov=facetorch", "--cov-report=term", "--cov-fail-under=95"]
 
-  facetorch-lock-gpu:
-    platform: linux/amd64
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.lock
-    volumes:
-      - ./:/opt/facetorch
-    entrypoint: ["conda", "run", "--no-capture-output", "-n", "base", "conda-lock", "-p", "linux-64", "-f", "gpu.environment.yml", "--lockfile", "new.gpu.conda-lock.yml"]
+  # facetorch-dev-example:
+  #   platform: linux/amd64
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/Dockerfile.dev
+  #   volumes:
+  #     - ./:/opt/facetorch
+  #   entrypoint: ["conda", "run", "--no-capture-output", "-n", "env", "python", "scripts/example.py"]
+
+  # facetorch-lock:
+  #   platform: linux/amd64
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/Dockerfile.lock
+  #   volumes:
+  #     - ./:/opt/facetorch
+  #   entrypoint: ["conda", "run", "--no-capture-output", "-n", "base", "conda-lock", "-p", "linux-64", "-f", "environment.yml", "--lockfile", "new.conda-lock.yml"]
+
+  # facetorch-lock-gpu:
+  #   platform: linux/amd64
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/Dockerfile.lock
+  #   volumes:
+  #     - ./:/opt/facetorch
+  #   entrypoint: ["conda", "run", "--no-capture-output", "-n", "base", "conda-lock", "-p", "linux-64", "-f", "gpu.environment.yml", "--lockfile", "new.gpu.conda-lock.yml"]
