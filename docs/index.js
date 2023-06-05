@@ -166,7 +166,7 @@ INDEX=[
 {
 "ref":"facetorch.analyzer.detector.post.PostRetFace",
 "url":6,
-"doc":"Initialize the detector postprocessor. Modified from https: github.com/biubug6/Pytorch_Retinaface. Args: transform (Compose): Composed Torch transform object. device (torch.device): Torch device cpu or cuda. optimize_transform (bool): Whether to optimize the transform. confidence_threshold (float): Confidence threshold for face detection. top_k (int): Top K faces to keep before NMS. nms_threshold (float): NMS threshold. keep_top_k (int): Keep top K faces after NMS. score_threshold (float): Score threshold for face detection. prior_box (PriorBox): PriorBox object. variance (List[float]): Prior box variance. reverse_colors (bool): Whether to reverse the colors of the image tensor from RGB to BGR or vice versa. If False, the colors remain unchanged. Default: False. expand_box_ratio (int): Number of pixels to expand the face location and tensor by. Default: 0."
+"doc":"Initialize the detector postprocessor. Modified from https: github.com/biubug6/Pytorch_Retinaface. Args: transform (Compose): Composed Torch transform object. device (torch.device): Torch device cpu or cuda. optimize_transform (bool): Whether to optimize the transform. confidence_threshold (float): Confidence threshold for face detection. top_k (int): Top K faces to keep before NMS. nms_threshold (float): NMS threshold. keep_top_k (int): Keep top K faces after NMS. score_threshold (float): Score threshold for face detection. prior_box (PriorBox): PriorBox object. variance (List[float]): Prior box variance. reverse_colors (bool): Whether to reverse the colors of the image tensor from RGB to BGR or vice versa. If False, the colors remain unchanged. Default: False. expand_box_ratio (float): Expand the box by this ratio. Default: 0.0."
 },
 {
 "ref":"facetorch.analyzer.detector.post.PostRetFace.run",
@@ -306,7 +306,7 @@ INDEX=[
 {
 "ref":"facetorch.analyzer.predictor.post.PostArgMax",
 "url":10,
-"doc":"Initialize the predictor postprocessor that runs argmax on the prediction tensor and returns a list of prediction data structures. Args: transform (Compose): Composed Torch transform object. device (torch.device): Torch device cpu or cuda. optimize_transform (bool): Whether to optimize the transform using TorchScript. labels (List[str]): List of labels. dim (int): Dimension of the prediction."
+"doc":"Initialize the predictor postprocessor that runs argmax on the prediction tensor and returns a list of prediction data structures. Args: transform (Compose): Composed Torch transform object. device (torch.device): Torch device cpu or cuda. optimize_transform (bool): Whether to optimize the transform using TorchScript. labels (List[str]): List of labels. dim (int): Axis along which to apply the argmax."
 },
 {
 "ref":"facetorch.analyzer.predictor.post.PostArgMax.run",
@@ -357,7 +357,7 @@ INDEX=[
 {
 "ref":"facetorch.analyzer.predictor.post.PostEmbedder.run",
 "url":10,
-"doc":"Post-processes the prediction tensor using argmax and returns a list of prediction data structures, one for each face. Args: preds (torch.Tensor): Batch prediction tensor. Returns: List[Prediction]: List of prediction data structures containing the predicted labels and confidence scores for each face in the batch.",
+"doc":"Extracts the embedding from the prediction tensor and returns a list of prediction data structures, one for each face. Args: preds (torch.Tensor): Batch prediction tensor. Returns: List[Prediction]: List of prediction data structures containing the predicted embeddings.",
 "func":1
 },
 {
@@ -368,6 +368,29 @@ INDEX=[
 },
 {
 "ref":"facetorch.analyzer.predictor.post.PostEmbedder.optimize",
+"url":4,
+"doc":"Optimizes the transform using torch.jit and deploys it to the device.",
+"func":1
+},
+{
+"ref":"facetorch.analyzer.predictor.post.PostMultiLabel",
+"url":10,
+"doc":"Initialize the predictor postprocessor that extracts multiple labels from the confidence scores. Args: transform (Compose): Composed Torch transform object. device (torch.device): Torch device cpu or cuda. optimize_transform (bool): Whether to optimize the transform using TorchScript. labels (List[str]): List of labels. dim (int): Axis along which to apply the softmax. threshold (float): Probability threshold for including a label. Only labels with a confidence score above the threshold are included. Defaults to 0.5."
+},
+{
+"ref":"facetorch.analyzer.predictor.post.PostMultiLabel.run",
+"url":10,
+"doc":"Extracts multiple labels and puts them in other[multi] predictions. The most likely label is put in the label field. Confidence scores are returned in the logits field. Args: preds (torch.Tensor): Batch prediction tensor. Returns: List[Prediction]: List of prediction data structures containing the most prevailing label, confidence scores, and multiple labels for each face.",
+"func":1
+},
+{
+"ref":"facetorch.analyzer.predictor.post.PostMultiLabel.create_pred_list",
+"url":10,
+"doc":"Create a list of predictions. Args: preds (torch.Tensor): Tensor of predictions, shape (batch, _). indices (List[int]): List of label indices, one for each sample. Returns: List[Prediction]: List of predictions.",
+"func":1
+},
+{
+"ref":"facetorch.analyzer.predictor.post.PostMultiLabel.optimize",
 "url":4,
 "doc":"Optimizes the transform using torch.jit and deploys it to the device.",
 "func":1
@@ -539,18 +562,18 @@ INDEX=[
 "func":1
 },
 {
-"ref":"facetorch.analyzer.utilizer.LandmarkDrawer",
+"ref":"facetorch.analyzer.utilizer.LandmarkDrawerTorch",
 "url":16,
-"doc":"Initializes the LandmarkDrawer class. This class is used to draw the 3D face landmarks to the image tensor. Args: transform (Compose): Composed Torch transform object. device (torch.device): Torch device cpu or cuda object. optimize_transform (bool): Whether to optimize the transform. marker (str): Marker type. markersize (float): Marker size. opacity (float): Opacity (transparency) of landmarks. line_width (float): Line width. color (str): Marker color. markeredgecolor (str): Marker edge color."
+"doc":"Initializes the LandmarkDrawer class. This class is used to draw the 3D face landmarks to the image tensor. Args: transform (Compose): Composed Torch transform object. device (torch.device): Torch device cpu or cuda object. optimize_transform (bool): Whether to optimize the transform. width (int): Marker keypoint width. color (str): Marker color."
 },
 {
-"ref":"facetorch.analyzer.utilizer.LandmarkDrawer.run",
+"ref":"facetorch.analyzer.utilizer.LandmarkDrawerTorch.run",
 "url":16,
 "doc":"Draws 3D face landmarks to the image tensor. Args: data (ImageData): ImageData object containing the image tensor and 3D face landmarks. Returns: ImageData: ImageData object containing the image tensor with 3D face landmarks.",
 "func":1
 },
 {
-"ref":"facetorch.analyzer.utilizer.LandmarkDrawer.optimize",
+"ref":"facetorch.analyzer.utilizer.LandmarkDrawerTorch.optimize",
 "url":4,
 "doc":"Optimizes the transform using torch.jit and deploys it to the device.",
 "func":1
@@ -617,18 +640,18 @@ INDEX=[
 "func":1
 },
 {
-"ref":"facetorch.analyzer.utilizer.draw.LandmarkDrawer",
+"ref":"facetorch.analyzer.utilizer.draw.LandmarkDrawerTorch",
 "url":18,
-"doc":"Initializes the LandmarkDrawer class. This class is used to draw the 3D face landmarks to the image tensor. Args: transform (Compose): Composed Torch transform object. device (torch.device): Torch device cpu or cuda object. optimize_transform (bool): Whether to optimize the transform. marker (str): Marker type. markersize (float): Marker size. opacity (float): Opacity (transparency) of landmarks. line_width (float): Line width. color (str): Marker color. markeredgecolor (str): Marker edge color."
+"doc":"Initializes the LandmarkDrawer class. This class is used to draw the 3D face landmarks to the image tensor. Args: transform (Compose): Composed Torch transform object. device (torch.device): Torch device cpu or cuda object. optimize_transform (bool): Whether to optimize the transform. width (int): Marker keypoint width. color (str): Marker color."
 },
 {
-"ref":"facetorch.analyzer.utilizer.draw.LandmarkDrawer.run",
+"ref":"facetorch.analyzer.utilizer.draw.LandmarkDrawerTorch.run",
 "url":18,
 "doc":"Draws 3D face landmarks to the image tensor. Args: data (ImageData): ImageData object containing the image tensor and 3D face landmarks. Returns: ImageData: ImageData object containing the image tensor with 3D face landmarks.",
 "func":1
 },
 {
-"ref":"facetorch.analyzer.utilizer.draw.LandmarkDrawer.optimize",
+"ref":"facetorch.analyzer.utilizer.draw.LandmarkDrawerTorch.optimize",
 "url":4,
 "doc":"Optimizes the transform using torch.jit and deploys it to the device.",
 "func":1
@@ -799,7 +822,7 @@ INDEX=[
 {
 "ref":"facetorch.datastruct.Location.expand",
 "url":20,
-"doc":"Expand the location while keeping the center. Args: amount (int): Amount of pixels to expand the location by. Returns: None",
+"doc":"Expand the location while keeping the center. Args: amount (float): Amount to expand the location by in multiples of the original size. Returns: None",
 "func":1
 },
 {
@@ -890,7 +913,7 @@ INDEX=[
 {
 "ref":"facetorch.datastruct.ImageData",
 "url":20,
-"doc":"The main data class used for passing data between the different facetorch modules. Attributes: path_input (str): Path to the input image. path_output (str): Path to the output image where the resulting image is saved. img (torch.Tensor): Original image tensor used for drawing purposes. tensor (torch.Tensor): Processed image tensor. dims (Dimensions): Dimensions of the image (height, width). det (Detection): Detection data given by the detector. faces (List[Face]): List of faces in the image. version (int): Version of the facetorch library."
+"doc":"The main data class used for passing data between the different facetorch modules. Attributes: path_input (str): Path to the input image. path_output (str): Path to the output image where the resulting image is saved. img (torch.Tensor): Original image tensor used for drawing purposes. tensor (torch.Tensor): Processed image tensor. dims (Dimensions): Dimensions of the image (height, width). det (Detection): Detection data given by the detector. faces (List[Face]): List of faces in the image. version (str): Version of the facetorch library."
 },
 {
 "ref":"facetorch.datastruct.ImageData.path_input",
@@ -989,7 +1012,7 @@ INDEX=[
 {
 "ref":"facetorch.datastruct.Response",
 "url":20,
-"doc":"Data class for response data, which is a subset of ImageData. Attributes: faces (List[Face]): List of faces in the image. version (int): Version of the facetorch library."
+"doc":"Data class for response data, which is a subset of ImageData. Attributes: faces (List[Face]): List of faces in the image. version (str): Version of the facetorch library."
 },
 {
 "ref":"facetorch.datastruct.Response.faces",

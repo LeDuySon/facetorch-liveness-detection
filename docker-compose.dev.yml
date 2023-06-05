@@ -3,13 +3,12 @@ services:
 
   # Container for development purposes
   facetorch-dev:
+    platform: linux/amd64
     build:
       context: .
       dockerfile: ./docker/Dockerfile.dev
     volumes:
       - ./:/opt/facetorch
-    ports:
-      - "8080:8080"
     entrypoint: ["/bin/bash"]
 
   facetorch-dev-gpu:
@@ -18,8 +17,6 @@ services:
       dockerfile: ./docker/Dockerfile.dev.gpu
     volumes:
       - ./:/opt/facetorch
-    ports:
-      - "8080:8080"
     shm_size: 8gb
     deploy:
       resources:
@@ -31,21 +28,37 @@ services:
     entrypoint: ["/bin/bash"]
 
   facetorch-tests:
+    platform: linux/amd64
     build:
       context: .
       dockerfile: ./docker/Dockerfile.tests
     volumes:
       - ./:/opt/facetorch
-    ports:
-      - "8080:8080"
     entrypoint: ["conda", "run", "--no-capture-output", "-n", "env", "pytest", "-v", "--cov=facetorch", "--cov-report=term", "--cov-fail-under=95"]
 
   facetorch-dev-example:
+    platform: linux/amd64
     build:
       context: .
       dockerfile: ./docker/Dockerfile.dev
     volumes:
       - ./:/opt/facetorch
-    ports:
-      - "8080:8080"
     entrypoint: ["conda", "run", "--no-capture-output", "-n", "env", "python", "scripts/example.py"]
+
+  facetorch-lock:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.lock
+    volumes:
+      - ./:/opt/facetorch
+    entrypoint: ["conda", "run", "--no-capture-output", "-n", "base", "conda-lock", "-p", "linux-64", "-f", "environment.yml", "--lockfile", "new.conda-lock.yml"]
+
+  facetorch-lock-gpu:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.lock
+    volumes:
+      - ./:/opt/facetorch
+    entrypoint: ["conda", "run", "--no-capture-output", "-n", "base", "conda-lock", "-p", "linux-64", "-f", "gpu.environment.yml", "--lockfile", "new.gpu.conda-lock.yml"]

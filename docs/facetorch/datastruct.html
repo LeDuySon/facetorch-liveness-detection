@@ -86,20 +86,27 @@ class Location:
         else:
             pass
 
-    def expand(self, amount: int) -&gt; None:
+    def expand(self, amount: float) -&gt; None:
         &#34;&#34;&#34;Expand the location while keeping the center.
 
         Args:
-            amount (int): Amount of pixels to expand the location by.
+            amount (float): Amount to expand the location by in multiples of the original size.
+
 
         Returns:
             None
         &#34;&#34;&#34;
-        if amount != 0:
-            self.x1 = self.x1 - amount
-            self.y1 = self.y1 - amount
-            self.x2 = self.x2 + amount
-            self.y2 = self.y2 + amount
+        assert amount &gt;= 0, &#34;Amount must be greater than or equal to 0.&#34;
+        # if amount != 0:
+        #     self.x1 = self.x1 - amount
+        #     self.y1 = self.y1 - amount
+        #     self.x2 = self.x2 + amount
+        #     self.y2 = self.y2 + amount
+        if amount != 0.0:
+            self.x1 = self.x1 - int((self.x2 - self.x1) / 2 * amount)
+            self.y1 = self.y1 - int((self.y2 - self.y1) / 2 * amount)
+            self.x2 = self.x2 + int((self.x2 - self.x1) / 2 * amount)
+            self.y2 = self.y2 + int((self.y2 - self.y1) / 2 * amount)
 
 
 @dataclass
@@ -170,7 +177,7 @@ class ImageData:
         dims (Dimensions): Dimensions of the image (height, width).
         det (Detection): Detection data given by the detector.
         faces (List[Face]): List of faces in the image.
-        version (int): Version of the facetorch library.
+        version (str): Version of the facetorch library.
 
     &#34;&#34;&#34;
 
@@ -229,7 +236,9 @@ class ImageData:
         &#34;&#34;&#34;Reset the detection object to empty state.&#34;&#34;&#34;
         self.det = Detection()
 
-    @Timer(&#34;ImageData.reset_faces&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger.debug)
+    @Timer(
+        &#34;ImageData.reset_faces&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug
+    )
     def reset_tensors(self) -&gt; None:
         &#34;&#34;&#34;Reset the tensors to empty state.&#34;&#34;&#34;
         self.reset_img()
@@ -268,7 +277,7 @@ class Response:
 
     Attributes:
         faces (List[Face]): List of faces in the image.
-        version (int): Version of the facetorch library.
+        version (str): Version of the facetorch library.
 
     &#34;&#34;&#34;
 
@@ -383,20 +392,27 @@ class Location:
         else:
             pass
 
-    def expand(self, amount: int) -&gt; None:
+    def expand(self, amount: float) -&gt; None:
         &#34;&#34;&#34;Expand the location while keeping the center.
 
         Args:
-            amount (int): Amount of pixels to expand the location by.
+            amount (float): Amount to expand the location by in multiples of the original size.
+
 
         Returns:
             None
         &#34;&#34;&#34;
-        if amount != 0:
-            self.x1 = self.x1 - amount
-            self.y1 = self.y1 - amount
-            self.x2 = self.x2 + amount
-            self.y2 = self.y2 + amount</code></pre>
+        assert amount &gt;= 0, &#34;Amount must be greater than or equal to 0.&#34;
+        # if amount != 0:
+        #     self.x1 = self.x1 - amount
+        #     self.y1 = self.y1 - amount
+        #     self.x2 = self.x2 + amount
+        #     self.y2 = self.y2 + amount
+        if amount != 0.0:
+            self.x1 = self.x1 - int((self.x2 - self.x1) / 2 * amount)
+            self.y1 = self.y1 - int((self.y2 - self.y1) / 2 * amount)
+            self.x2 = self.x2 + int((self.x2 - self.x1) / 2 * amount)
+            self.y2 = self.y2 + int((self.y2 - self.y1) / 2 * amount)</code></pre>
 </details>
 <h3>Class variables</h3>
 <dl>
@@ -452,14 +468,14 @@ class Location:
 </details>
 </dd>
 <dt id="facetorch.datastruct.Location.expand"><code class="name flex">
-<span>def <span class="ident">expand</span></span>(<span>self, amount: int) ‑> None</span>
+<span>def <span class="ident">expand</span></span>(<span>self, amount: float) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Expand the location while keeping the center.</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>amount</code></strong> :&ensp;<code>int</code></dt>
-<dd>Amount of pixels to expand the location by.</dd>
+<dt><strong><code>amount</code></strong> :&ensp;<code>float</code></dt>
+<dd>Amount to expand the location by in multiples of the original size.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <p>None</p></div>
@@ -467,20 +483,27 @@ class Location:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def expand(self, amount: int) -&gt; None:
+<pre><code class="python">def expand(self, amount: float) -&gt; None:
     &#34;&#34;&#34;Expand the location while keeping the center.
 
     Args:
-        amount (int): Amount of pixels to expand the location by.
+        amount (float): Amount to expand the location by in multiples of the original size.
+
 
     Returns:
         None
     &#34;&#34;&#34;
-    if amount != 0:
-        self.x1 = self.x1 - amount
-        self.y1 = self.y1 - amount
-        self.x2 = self.x2 + amount
-        self.y2 = self.y2 + amount</code></pre>
+    assert amount &gt;= 0, &#34;Amount must be greater than or equal to 0.&#34;
+    # if amount != 0:
+    #     self.x1 = self.x1 - amount
+    #     self.y1 = self.y1 - amount
+    #     self.x2 = self.x2 + amount
+    #     self.y2 = self.y2 + amount
+    if amount != 0.0:
+        self.x1 = self.x1 - int((self.x2 - self.x1) / 2 * amount)
+        self.y1 = self.y1 - int((self.y2 - self.y1) / 2 * amount)
+        self.x2 = self.x2 + int((self.x2 - self.x1) / 2 * amount)
+        self.y2 = self.y2 + int((self.y2 - self.y1) / 2 * amount)</code></pre>
 </details>
 </dd>
 </dl>
@@ -695,7 +718,7 @@ class Face:
 <dd>Detection data given by the detector.</dd>
 <dt><strong><code>faces</code></strong> :&ensp;<code>List[<a title="facetorch.datastruct.Face" href="#facetorch.datastruct.Face">Face</a>]</code></dt>
 <dd>List of faces in the image.</dd>
-<dt><strong><code>version</code></strong> :&ensp;<code>int</code></dt>
+<dt><strong><code>version</code></strong> :&ensp;<code>str</code></dt>
 <dd>Version of the facetorch library.</dd>
 </dl></div>
 <details class="source">
@@ -714,7 +737,7 @@ class ImageData:
         dims (Dimensions): Dimensions of the image (height, width).
         det (Detection): Detection data given by the detector.
         faces (List[Face]): List of faces in the image.
-        version (int): Version of the facetorch library.
+        version (str): Version of the facetorch library.
 
     &#34;&#34;&#34;
 
@@ -773,7 +796,9 @@ class ImageData:
         &#34;&#34;&#34;Reset the detection object to empty state.&#34;&#34;&#34;
         self.det = Detection()
 
-    @Timer(&#34;ImageData.reset_faces&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger.debug)
+    @Timer(
+        &#34;ImageData.reset_faces&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug
+    )
     def reset_tensors(self) -&gt; None:
         &#34;&#34;&#34;Reset the tensors to empty state.&#34;&#34;&#34;
         self.reset_img()
@@ -968,7 +993,9 @@ class ImageData:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@Timer(&#34;ImageData.reset_faces&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger.debug)
+<pre><code class="python">@Timer(
+    &#34;ImageData.reset_faces&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug
+)
 def reset_tensors(self) -&gt; None:
     &#34;&#34;&#34;Reset the tensors to empty state.&#34;&#34;&#34;
     self.reset_img()
@@ -1038,7 +1065,7 @@ def reset_tensors(self) -&gt; None:
 <dl>
 <dt><strong><code>faces</code></strong> :&ensp;<code>List[<a title="facetorch.datastruct.Face" href="#facetorch.datastruct.Face">Face</a>]</code></dt>
 <dd>List of faces in the image.</dd>
-<dt><strong><code>version</code></strong> :&ensp;<code>int</code></dt>
+<dt><strong><code>version</code></strong> :&ensp;<code>str</code></dt>
 <dd>Version of the facetorch library.</dd>
 </dl></div>
 <details class="source">
@@ -1051,7 +1078,7 @@ class Response:
 
     Attributes:
         faces (List[Face]): List of faces in the image.
-        version (int): Version of the facetorch library.
+        version (str): Version of the facetorch library.
 
     &#34;&#34;&#34;
 

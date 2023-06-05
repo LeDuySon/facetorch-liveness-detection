@@ -6,8 +6,16 @@
 [![PyPI - License](https://img.shields.io/pypi/l/facetorch)](https://raw.githubusercontent.com/tomas-gajarsky/facetorch/main/LICENSE)
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 
+[Hugging Face Space demo app 🤗 ](https://huggingface.co/spaces/tomas-gajarsky/facetorch-app)
 
-[Documentation](https://tomas-gajarsky.github.io/facetorch/facetorch/index.html), [Docker Hub](https://hub.docker.com/repository/docker/tomasgajarsky/facetorch) [(GPU)](https://hub.docker.com/repository/docker/tomasgajarsky/facetorch-gpu)
+[Google Colab notebook demo](https://colab.research.google.com/github/tomas-gajarsky/facetorch/blob/main/notebooks/facetorch_notebook_demo.ipynb)
+<a target="_blank" href="https://colab.research.google.com/github/tomas-gajarsky/facetorch/blob/main/notebooks/facetorch_notebook_demo.ipynb">
+<img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+</a>
+
+[User Guide](https://medium.com/@gajarsky.tomas/facetorch-user-guide-a0e9fd2a5552), [Documentation](https://tomas-gajarsky.github.io/facetorch/facetorch/index.html)
+ 
+[Docker Hub](https://hub.docker.com/repository/docker/tomasgajarsky/facetorch) [(GPU)](https://hub.docker.com/repository/docker/tomasgajarsky/facetorch-gpu)
 
 Facetorch is a Python library that can detect faces and analyze facial features using deep neural networks. The goal is to gather open sourced face analysis models from the community, optimize them for performance using TorchScript and combine them to create a face analysis tool that one can:
 
@@ -44,6 +52,8 @@ Docker Compose provides an easy way of building a working facetorch environment 
 
 Check *data/output* for resulting images with bounding boxes and facial 3D landmarks.
 
+(Apple Mac M1) Use Rosetta 2 emulator in Docker Desktop to run the CPU version.
+
 ### Configure
 
 The project is configured by files located in *conf* with the main file: *conf/config.yaml*. One can easily add or remove modules from the configuration.
@@ -68,6 +78,7 @@ analyzer
             ├── embed
             ├── verify
             ├── fer
+            ├── au
             ├── deepfake
             └── align
     └── utilizer
@@ -81,9 +92,9 @@ analyzer
 
 ### Detector
 
-    |    detector   |   source  |   license   | version |
-    | ------------- | --------- | ----------- | ------- |
-    |   RetinaFace  |  biubug6  | MIT license |    1    |
+    |     model     |   source  |   params  |   license   | version |
+    | ------------- | --------- | --------- | ----------- | ------- |
+    |   RetinaFace  |  biubug6  |   27.3M   | MIT license |    1    |
 
 1. biubug6
     * code: [Pytorch_Retinaface](https://github.com/biubug6/Pytorch_Retinaface)
@@ -96,9 +107,9 @@ analyzer
 
 #### Facial Representation Learning (embed)
 
-    |       embed       |   source   |   license   | version |  
-    | ----------------- | ---------- | ----------- | ------- |
-    |  ResNet-50 VGG 1M |  1adrianb  | MIT license |    1    |
+    |       model       |   source   |  params |   license   | version |  
+    | ----------------- | ---------- | ------- | ----------- | ------- |
+    |  ResNet-50 VGG 1M |  1adrianb  |  28.4M  | MIT license |    1    |
 
 1. 1adrianb
     * code: [unsupervised-face-representation](https://github.com/1adrianb/unsupervised-face-representation)
@@ -107,23 +118,31 @@ analyzer
 
 #### Face Verification (verify)
 
-    |    verify     |    source    |      license       | version |  
-    | ------------- |  ----------- | ------------------ | ------- |
-    |  MagFace+UNPG |  Jung-Jun-Uk | Apache License 2.0 |    1    |
+    |       model      |   source    |  params  |      license       | version |  
+    | ---------------- | ----------- | -------- | ------------------ | ------- |
+    |    MagFace+UNPG  | Jung-Jun-Uk |   65.2M  | Apache License 2.0 |    1    |
+    |  AdaFaceR100W12M |  mk-minchul |    -     |     MIT License    |    2    |
 
 1. Jung-Jun-Uk
     * code: [UNPG](https://github.com/jung-jun-uk/unpg)
     * paper: [Jung et al. - Unified Negative Pair Generation toward Well-discriminative Feature Space for Face Recognition](https://arxiv.org/abs/2203.11593)
-    * [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/unified-negative-pair-generation-toward-well/face-verification-on-ijb-b)](https://paperswithcode.com/sota/face-verification-on-ijb-b?p=unified-negative-pair-generation-toward-well)
+    * [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/unified-negative-pair-generation-toward-well/face-verification-on-ijb-b)](https://paperswithcode.com/sota/face-verification-on-ijb-b?p=unified-negative-pair-generation-toward-well)(FAR=0.01)
+    * Note: ```include_tensors``` needs to be True in order to include the model prediction in Prediction.logits
+2. mk-minchul
+    * code: [AdaFace](https://github.com/mk-minchul/adaface)
+    * paper: [Kim et al. - AdaFace: Quality Adaptive Margin for Face Recognition](https://arxiv.org/abs/2204.00964)
+    * [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/adaface-quality-adaptive-margin-for-face/face-verification-on-ijb-b)](https://paperswithcode.com/sota/face-verification-on-ijb-b?p=adaface-quality-adaptive-margin-for-face) <
+    * [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/adaface-quality-adaptive-margin-for-face/face-verification-on-ijb-c)](https://paperswithcode.com/sota/face-verification-on-ijb-c?p=adaface-quality-adaptive-margin-for-face) <
+    * < badges represent models trained on smaller WebFace 4M dataset
     * Note: ```include_tensors``` needs to be True in order to include the model prediction in Prediction.logits
 
 
 #### Facial Expression Recognition (fer)
 
-    |        fer        |      source    |       license      | version |  
-    | ----------------- | -------------- | ------------------ | ------- |
-    | EfficientNet B0 7 | HSE-asavchenko | Apache License 2.0 |    1    |
-    | EfficientNet B2 8 | HSE-asavchenko | Apache License 2.0 |    2    |
+    |       model       |      source    |  params  |       license      | version |  
+    | ----------------- | -------------- | -------- | ------------------ | ------- |
+    | EfficientNet B0 7 | HSE-asavchenko |    4M    | Apache License 2.0 |    1    |
+    | EfficientNet B2 8 | HSE-asavchenko |   7.7M   | Apache License 2.0 |    2    |
 
 1. HSE-asavchenko
     * code: [face-emotion-recognition](https://github.com/HSE-asavchenko/face-emotion-recognition)
@@ -132,12 +151,22 @@ analyzer
     * B0 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/facial-expression-and-attributes-recognition/facial-expression-recognition-on-affectnet)](https://paperswithcode.com/sota/facial-expression-recognition-on-affectnet?p=facial-expression-and-attributes-recognition)
     * B0 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/facial-expression-and-attributes-recognition/facial-expression-recognition-on-acted-facial)](https://paperswithcode.com/sota/facial-expression-recognition-on-acted-facial?p=facial-expression-and-attributes-recognition)
 
+#### Facial Action Unit Detection (au)
+
+    |        model        |   source  |  params |       license      | version |  
+    | ------------------- | --------- | ------- | ------------------ | ------- |
+    | OpenGraph Swin Base |  CVI-SZU  |   94M   |     MIT License    |    1    |
+
+1. CVI-SZU
+    * code: [ME-GraphAU](https://github.com/CVI-SZU/ME-GraphAU)
+    * paper: [Luo et al. - Learning Multi-dimensional Edge Feature-based AU Relation Graph for Facial Action Unit Recognition](https://arxiv.org/abs/2205.01782)
+    * [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/learning-multi-dimensional-edge-feature-based/facial-action-unit-detection-on-bp4d)](https://paperswithcode.com/sota/facial-action-unit-detection-on-bp4d?p=learning-multi-dimensional-edge-feature-based)
 
 #### Deepfake Detection (deepfake)
 
-    |       deepfake       |      source      |   license   | version |
-    | -------------------- | ---------------- | ----------- | ------- |
-    |    EfficientNet B7   |     selimsef     | MIT license |    1    |
+    |         model        |      source      |  params  |   license   | version |
+    | -------------------- | ---------------- | -------- | ----------- | ------- |
+    |    EfficientNet B7   |     selimsef     |   66.4M  | MIT license |    1    |
 
 1. selimsef
     * code: [dfdc_deepfake_challenge](https://github.com/selimsef/dfdc_deepfake_challenge)
@@ -145,9 +174,9 @@ analyzer
 
 #### Face Alignment (align)
 
-    |       align       |      source      |   license   | version |
-    | ----------------- | ---------------- | ----------- | ------- |
-    |    MobileNet v2   |     choyingw     | MIT license |    1    |
+    |       model       |      source      |  params  |   license   | version |
+    | ----------------- | ---------------- | -------- | ----------- | ------- |
+    |    MobileNet v2   |     choyingw     |   4.1M   | MIT license |    1    |
 
 1. choyingw
     * code: [SynergyNet](https://github.com/choyingw/SynergyNet)
@@ -177,25 +206,26 @@ You can also download the models manually from a [public Google Drive folder](ht
 
 ### Execution time
 
-Image test.jpg (4 faces) is analyzed (including drawing boxes and landmarks) in about 680ms and test3.jpg (25 faces) in about 2s (batch_size=8) on NVIDIA Tesla T4 GPU once the default configuration (*conf/config.yaml*) of models is initialized and pre heated to the initial image size 1080x1080 by the first run. One can monitor the execution times in logs using the DEBUG level.
+Image test.jpg (4 faces) is analyzed (including drawing boxes and landmarks, but not saving) in about 482ms and test3.jpg (25 faces) in about 1844ms (batch_size=8) on NVIDIA Tesla T4 GPU once the default configuration (*conf/config.yaml*) of models is initialized and pre heated to the initial image size 1080x1080 by the first run. One can monitor the execution times in logs using the DEBUG level.
 
 Detailed test.jpg execution times:
 ```
 analyzer
     ├── reader: 27 ms
-    ├── detector: 230 ms
+    ├── detector: 193 ms
     ├── unifier: 1 ms
     └── predictor
             ├── embed: 8 ms
-            ├── verify: 18 ms
+            ├── verify: 58 ms
             ├── fer: 28 ms
+            ├── au: 57 ms
             ├── deepfake: 117 ms
             └── align: 5 ms
     └── utilizer
             ├── align: 8 ms
             ├── draw_boxes: 22 ms
-            ├── draw_landmarks: 152 ms
-            └── save: 1 ms
+            ├── draw_landmarks: 7 ms
+            └── save: 298 ms
 ```
 
 
@@ -248,11 +278,13 @@ the requirements of the new model.
 CPU:
 * Add packages with corresponding versions to ```environment.yml``` file
 * Lock the environment: ```conda lock -p linux-64 -f environment.yml --lockfile conda-lock.yml```
+* (Alternative Docker) Lock the environment: ```docker compose -f docker-compose.dev.yml run facetorch-lock```
 * Install the locked environment: ```conda-lock install --name env conda-lock.yml```
 
 GPU:
 * Add packages with corresponding versions to ```gpu.environment.yml``` file
 * Lock the environment: ```conda lock -p linux-64 -f gpu.environment.yml --lockfile gpu.conda-lock.yml```
+* (Alternative Docker) Lock the environment: ```docker compose -f docker-compose.dev.yml run facetorch-lock-gpu```
 * Install the locked environment: ```conda-lock install --name env gpu.conda-lock.yml```
 
 ### Run tests + coverage

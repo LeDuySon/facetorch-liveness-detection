@@ -11,9 +11,9 @@ import torch
 def test_downloader_run(analyzer):
     if os.path.exists(analyzer.detector.downloader.path_local):
         os.remove(analyzer.detector.downloader.path_local)
-    analyzer.detector.downloader.run()
+    if not os.path.exists(analyzer.detector.downloader.path_local):
+        analyzer.detector.downloader.run()
     assert os.path.exists(analyzer.detector.downloader.path_local)
-    os.remove(analyzer.detector.downloader.path_local)
 
 
 @pytest.mark.integration

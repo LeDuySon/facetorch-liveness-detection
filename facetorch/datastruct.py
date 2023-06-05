@@ -58,11 +58,11 @@ class Location:
         else:
             pass
 
-    def expand(self, amount: float) -> None:
+    def expand(self, amount: int) -> None:
         """Expand the location while keeping the center.
 
         Args:
-            amount (float): Amount to expand the location by in multiples of the original size.
+            amount (int): Amount of pixels to expand the location by.
 
         Returns:
             None
@@ -148,7 +148,7 @@ class ImageData:
         dims (Dimensions): Dimensions of the image (height, width).
         det (Detection): Detection data given by the detector.
         faces (List[Face]): List of faces in the image.
-        version (int): Version of the facetorch library.
+        version (str): Version of the facetorch library.
 
     """
 
@@ -207,7 +207,9 @@ class ImageData:
         """Reset the detection object to empty state."""
         self.det = Detection()
 
-    @Timer("ImageData.reset_faces", "{name}: {milliseconds:.2f} ms", logger.debug)
+    @Timer(
+        "ImageData.reset_faces", "{name}: {milliseconds:.2f} ms", logger=logger.debug
+    )
     def reset_tensors(self) -> None:
         """Reset the tensors to empty state."""
         self.reset_img()
@@ -246,7 +248,7 @@ class Response:
 
     Attributes:
         faces (List[Face]): List of faces in the image.
-        version (int): Version of the facetorch library.
+        version (str): Version of the facetorch library.
 
     """
 

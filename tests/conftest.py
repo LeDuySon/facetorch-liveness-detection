@@ -40,6 +40,9 @@ def pytest_configure(config):
         "markers", "fer: mark tests related to Facial Expression Recognition Predictor"
     )
     config.addinivalue_line(
+        "markers", "au: mark tests related to Facial Action Unit Detection"
+    )
+    config.addinivalue_line(
         "markers", "deepfake: mark tests related to Deepfake Detection Predictor"
     )
     config.addinivalue_line(
@@ -82,13 +85,13 @@ def cfg(request) -> None:
     return cfg
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def analyzer(cfg) -> FaceAnalyzer:
     analyzer = FaceAnalyzer(cfg.analyzer)
     return analyzer
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def response(cfg, analyzer) -> ImageData:
     response = analyzer.run(
         path_image=cfg.path_image,

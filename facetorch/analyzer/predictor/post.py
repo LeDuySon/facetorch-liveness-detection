@@ -3,6 +3,7 @@ from typing import List, Tuple, Union
 
 import torch
 from codetiming import Timer
+from itertools import compress
 from facetorch.base import BaseProcessor
 from facetorch.datastruct import Prediction
 from facetorch.logger import LoggerJsonFile
@@ -13,7 +14,9 @@ logger = LoggerJsonFile().logger
 
 class BasePredPostProcessor(BaseProcessor):
     @Timer(
-        "BasePredPostProcessor.__init__", "{name}: {milliseconds:.2f} ms", logger.debug
+        "BasePredPostProcessor.__init__",
+        "{name}: {milliseconds:.2f} ms",
+        logger=logger.debug,
     )
     def __init__(
         self,
@@ -78,7 +81,7 @@ class BasePredPostProcessor(BaseProcessor):
 
 
 class PostArgMax(BasePredPostProcessor):
-    @Timer("PostArgMax.__init__", "{name}: {milliseconds:.2f} ms", logger.debug)
+    @Timer("PostArgMax.__init__", "{name}: {milliseconds:.2f} ms", logger=logger.debug)
     def __init__(
         self,
         transform: transforms.Compose,
@@ -94,12 +97,12 @@ class PostArgMax(BasePredPostProcessor):
             device (torch.device): Torch device cpu or cuda.
             optimize_transform (bool): Whether to optimize the transform using TorchScript.
             labels (List[str]): List of labels.
-            dim (int): Dimension of the prediction.
+            dim (int): Axis along which to apply the argmax.
         """
         super().__init__(transform, device, optimize_transform, labels)
         self.dim = dim
 
-    @Timer("PostArgMax.run", "{name}: {milliseconds:.2f} ms", logger.debug)
+    @Timer("PostArgMax.run", "{name}: {milliseconds:.2f} ms", logger=logger.debug)
     def run(self, preds: torch.Tensor) -> List[Prediction]:
         """Post-processes the prediction tensor using argmax and returns a list of prediction data structures, one for each face.
 
@@ -116,7 +119,11 @@ class PostArgMax(BasePredPostProcessor):
 
 
 class PostSigmoidBinary(BasePredPostProcessor):
-    @Timer("PostSigmoidBinary.__init__", "{name}: {milliseconds:.2f} ms", logger.debug)
+    @Timer(
+        "PostSigmoidBinary.__init__",
+        "{name}: {milliseconds:.2f} ms",
+        logger=logger.debug,
+    )
     def __init__(
         self,
         transform: transforms.Compose,
@@ -137,7 +144,9 @@ class PostSigmoidBinary(BasePredPostProcessor):
         super().__init__(transform, device, optimize_transform, labels)
         self.threshold = threshold
 
-    @Timer("PostSigmoidBinary.run", "{name}: {milliseconds:.2f} ms", logger.debug)
+    @Timer(
+        "PostSigmoidBinary.run", "{name}: {milliseconds:.2f} ms", logger=logger.debug
+    )
     def run(self, preds: torch.Tensor) -> List[Prediction]:
         """Post-processes the prediction tensor using argmax and returns a list of prediction data structures, one for each face.
 
@@ -174,20 +183,74 @@ class PostEmbedder(BasePredPostProcessor):
         """
         super().__init__(transform, device, optimize_transform, labels)
 
-    @Timer("PostEmbedder.run", "{name}: {milliseconds:.2f} ms", logger.debug)
+    @Timer("PostEmbedder.run", "{name}: {milliseconds:.2f} ms", logger=logger.debug)
     def run(self, preds: torch.Tensor) -> List[Prediction]:
-        """Post-processes the prediction tensor using argmax and returns a list of prediction data structures, one for each face.
+        """Extracts the embedding from the prediction tensor and returns a list of prediction data structures, one for each face.
 
         Args:
             preds (torch.Tensor): Batch prediction tensor.
 
         Returns:
-            List[Prediction]: List of prediction data structures containing the predicted labels and confidence scores for each face in the batch.
+            List[Prediction]: List of prediction data structures containing the predicted embeddings.
         """
         if isinstance(preds, tuple):
             preds = preds[0]
 
         indices = [0] * preds.shape[0]
         pred_list = self.create_pred_list(preds, indices)
+
+        return pred_list
+
+
+class PostMultiLabel(BasePredPostProcessor):
+    def __init__(
+        self,
+        transform: transforms.Compose,
+        device: torch.device,
+        optimize_transform: bool,
+        labels: List[str],
+        dim: int,
+        threshold: float = 0.5,
+    ):
+        """Initialize the predictor postprocessor that extracts multiple labels from the confidence scores.
+
+        Args:
+            transform (Compose): Composed Torch transform object.
+            device (torch.device): Torch device cpu or cuda.
+            optimize_transform (bool): Whether to optimize the transform using TorchScript.
+            labels (List[str]): List of labels.
+            dim (int): Axis along which to apply the softmax.
+            threshold (float): Probability threshold for including a label. Only labels with a confidence score above the threshold are included. Defaults to 0.5.
+        """
+        super().__init__(transform, device, optimize_transform, labels)
+        self.dim = dim
+        self.threshold = threshold
+
+    @Timer("PostMultiLabel.run", "{name}: {milliseconds:.2f} ms", logger=logger.debug)
+    def run(self, preds: torch.Tensor) -> List[Prediction]:
+        """Extracts multiple labels and puts them in other[multi] predictions. The most likely label is put in the label field. Confidence scores are returned in the logits field.
+
+        Args:
+            preds (torch.Tensor): Batch prediction tensor.
+
+        Returns:
+            List[Prediction]: List of prediction data structures containing the most prevailing label, confidence scores, and multiple labels for each face.
+        """
+        if isinstance(preds, tuple):
+            preds = preds[0]
+
+        indices = torch.argmax(preds, dim=self.dim).cpu().numpy().tolist()
+
+        pred_list = []
+        for i in range(preds.shape[0]):
+            preds_sample = preds[i]
+            label_filter = (preds_sample > self.threshold).cpu().numpy().tolist()
+            labels_true = list(compress(self.labels, label_filter))
+            pred = Prediction(
+                label=self.labels[indices[i]],
+                logits=preds_sample,
+                other={"multi": labels_true},
+            )
+            pred_list.append(pred)
 
         return pred_list
