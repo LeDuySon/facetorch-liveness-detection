@@ -3,7 +3,7 @@ defaults:
   - analyzer/reader: default.yaml
   - analyzer/detector: retinaface.yaml
   - analyzer/unifier: img_380.yaml
-  - analyzer/predictor/embed: r50_vggface_1m.yaml
+  # - analyzer/predictor/embed: r50_vggface_1m.yaml
   - analyzer/predictor/verify: adaface_ir101_webface12m.yaml
   # - analyzer/predictor/fer: efficientnet_b2_8.yaml
   # - analyzer/predictor/au: open_graph_swin_base.yaml
@@ -13,7 +13,7 @@ defaults:
   # - analyzer/utilizer/align: lmk3d_mesh_pose.yaml
   - analyzer/utilizer/draw_boxes: torchvision_boxes.yaml
   # - analyzer/utilizer/draw_landmarks: torchvision_keypoints.yaml
-  - analyzer/utilizer/save: image_saver.yaml
+  # - analyzer/utilizer/save: image_saver.yaml
   - analyzer/logger: json_format.yaml
   - _self_
 
@@ -26,7 +26,7 @@ path_image: data/input/test8.jpg # str
 include_tensors: False # bool
 fix_img_size: True # bool
 batch_size: 8 # int
-return_img_data: False # bool
+return_img_data: True # bool
 path_output: data/output/test8.png # Optional[str]
 
 path_image_2: data/input/test3.jpg # str

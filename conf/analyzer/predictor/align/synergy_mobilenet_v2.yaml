@@ -3,7 +3,7 @@ _target_: facetorch.analyzer.predictor.FacePredictor
 downloader:
   _target_: facetorch.downloader.DownloaderGDrive
   file_id: 16gNFQdEH2nWvW3zTbdIAniKIbPAp6qBA
-  path_local: /opt/facetorch/models/torchscript/predictor/align/1/model.pt # str
+  path_local:  /home/ailab-rgb-1080ti/Work/yitec/liveness-detection/facetorch-liveness-detection/models/torchscript/predictor/align/1/model.pt # str
 
 device:
   _target_: torch.device

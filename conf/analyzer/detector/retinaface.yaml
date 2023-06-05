@@ -4,7 +4,8 @@ _target_: facetorch.analyzer.detector.FaceDetector
 downloader:
   _target_: facetorch.downloader.DownloaderGDrive
   file_id: 1eMuOdGkiNCOUTiEbKKoPCHGCuDgiKeNC  # str
-  path_local: /opt/facetorch/models/torchscript/detector/1/model.pt # str
+  # path_local: /home/ailab-rgb-1080ti/Work/yitec/liveness-detection/facetorch-liveness-detection/models/torchscript/detector/1/model.pt # str
+  path_local: /opt/facetorch/models/torchscript/detector/1/model.pt
 
 device:
   _target_: torch.device
@@ -46,5 +47,3 @@ postprocessor:
   variance: [0.1, 0.2]
   reverse_colors: ${analyzer.detector.reverse_colors} # True # bool
   expand_box_ratio: 0. # float
-
-  expand_box_ratio: 0.15 # float
