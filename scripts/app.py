@@ -44,7 +44,8 @@ def image_demo_handler(image, sess):
     # verify user 
     face_embed = output.faces[0].preds["verify"].logits.detach().cpu().tolist()
     user_name = sess["user_name"]
-    if(vector_db.verify_user(face_embed, user_name, threshold=0.5)):
+    if(vector_db.verify_user(face_embed, user_name, threshold=0.3)):
+
         bbox = output.faces[0].loc
         asf_out = output.faces[0].preds["antispoof"]
         
@@ -139,12 +140,12 @@ with gr.Blocks() as demo:
         
     with gr.Tab("Webcam Demo"):
         with gr.Row():
-            webcam_input = gr.Image(source="webcam", streaming=True)
+            webcam_input = gr.Image(source="webcam", streaming=True, type="pil")
             webcam_output = gr.Textbox(label="Liveness detection result")
             webcam_input.change(webcam_handler,
                            inputs=[webcam_input, sess],
                            outputs=webcam_output)
     
 if __name__ == "__main__":
-    demo.launch(show_error=True, share=False, server_name="0.0.0.0")
+    demo.launch(show_error=True, share=False, server_name="0.0.0.0", server_port=11322)
     
