@@ -8,6 +8,7 @@ import gradio as gr
 from facetorch import FaceAnalyzer
 
 from db import VectorDB
+from custom_fas import HistFAS
 
 # init pipeline
 initialize(config_path="../conf", job_name="test_app")
@@ -16,6 +17,9 @@ extractor_cfg = compose(config_name="feat_extractor.yaml")
 
 detector = FaceAnalyzer(detector_cfg.analyzer)
 extractor = FaceAnalyzer(extractor_cfg.analyzer)
+
+# fas
+fas_checker = HistFAS()
 
 vector_db = VectorDB("liveness_detection_prod")
 vector_db.create_collection(embedding_size=512)
@@ -86,26 +90,46 @@ def image_demo_handler(image, sess):
     
 #     return output_file
 
+def get_bbox_roi(face, image):
+    bbox = face.loc
+    face_roi = image.crop((bbox.x1, bbox.y1, bbox.x2, bbox.y2))
+    
+    return face_roi
+
 def webcam_handler(image, sess):
-    output = detector.run(image=image.copy(), return_img_data=False, include_tensors=True)
+    output = detector.run(image=image.copy(), return_img_data=True, include_tensors=True)
+    
+    # get vis img
+    vis_img = torchvision.transforms.functional.to_pil_image(output.img)
     
     if(len(output.faces) != 1):
-        return None, "Image must contain one face"
-    
+        return vis_img, "Image must contain one face"
+        
+    deepfake_check = output.faces[0].preds["deepfake"].label
     # verify user 
     face_embed = output.faces[0].preds["verify"].logits.detach().cpu().tolist()
+    
+    # check user upload photo or not
     user_name = sess["user_name"]
-    if(vector_db.verify_user(face_embed, user_name, threshold=0.5)):
+    if(user_name == "unknown"):
+        return vis_img, "You must upload your selfie image first!!!"
+    
+    if(vector_db.verify_user(face_embed, user_name, threshold=0.5) and deepfake_check == "Real"):
         bbox = output.faces[0].loc
-        asf_out = output.faces[0].preds["antispoof"]
+        asf_out = output.faces[0].preds["antispoof"].label
+        print("facetorch asf: ", asf_out)
         
-        if(asf_out.label == "Real"):
-            return f"user <{user_name}> is liveness"
+        # check antispoof
+        face_roi = get_bbox_roi(output.faces[0], image)
+        
+        if(fas_checker.check(face_roi) and asf_out == "Real"):
+            return vis_img, f"user <{user_name}> is liveness.\n Deepfake results: {deepfake_check}"
         else:
-            return f"user <{user_name}> is not liveness ({asf_out.label} attack)"
+            return vis_img, f"user <{user_name}> is not liveness.\n Deepfake results: {deepfake_check}"
         
     else:
-        return f"You are not look like {user_name}"
+        return vis_img, f"You are not look like {user_name}. Deepfake results: {deepfake_check}"
+    
 
 with gr.Blocks() as demo:
     gr.Markdown("Try our face liveness detection")
@@ -140,11 +164,13 @@ with gr.Blocks() as demo:
         
     with gr.Tab("Webcam Demo"):
         with gr.Row():
-            webcam_input = gr.Image(source="webcam", streaming=True, type="pil")
-            webcam_output = gr.Textbox(label="Liveness detection result")
-            webcam_input.change(webcam_handler,
-                           inputs=[webcam_input, sess],
-                           outputs=webcam_output)
+            webcam_input = gr.Image(source="webcam", streaming=False, type="pil")
+            webcam_image_output = gr.Image(lable="Output webcam image")
+            
+        webcam_output = gr.Textbox(label="Liveness detection result")
+        webcam_input.change(webcam_handler,
+                        inputs=[webcam_input, sess],
+                        outputs=[webcam_image_output, webcam_output])
     
 if __name__ == "__main__":
     demo.launch(show_error=True, share=False, server_name="0.0.0.0", server_port=11322)

@@ -39,7 +39,7 @@ logger = LoggerJsonFile().logger
 
 
 class BasePredPreProcessor(BaseProcessor):
-    @Timer(
+    #@Timer(
         &#34;BasePredPreProcessor.__init__&#34;,
         &#34;{name}: {milliseconds:.2f} ms&#34;,
         logger=logger.debug,
@@ -97,7 +97,7 @@ class PredictorPreProcessor(BasePredPreProcessor):
         super().__init__(transform, device, optimize_transform)
         self.reverse_colors = reverse_colors
 
-    @Timer(
+    #@Timer(
         &#34;PredictorPreProcessor.run&#34;,
         &#34;{name}: {milliseconds:.2f} ms&#34;,
         logger=logger.debug,
@@ -155,7 +155,7 @@ image.</dd>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class BasePredPreProcessor(BaseProcessor):
-    @Timer(
+    #@Timer(
         &#34;BasePredPreProcessor.__init__&#34;,
         &#34;{name}: {milliseconds:.2f} ms&#34;,
         logger=logger.debug,
@@ -285,7 +285,7 @@ def run(self, faces: torch.Tensor) -&gt; torch.Tensor:
         super().__init__(transform, device, optimize_transform)
         self.reverse_colors = reverse_colors
 
-    @Timer(
+    #@Timer(
         &#34;PredictorPreProcessor.run&#34;,
         &#34;{name}: {milliseconds:.2f} ms&#34;,
         logger=logger.debug,
@@ -333,7 +333,7 @@ def run(self, faces: torch.Tensor) -&gt; torch.Tensor:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@Timer(
+<pre><code class="python">#@Timer(
     &#34;PredictorPreProcessor.run&#34;,
     &#34;{name}: {milliseconds:.2f} ms&#34;,
     logger=logger.debug,

@@ -41,7 +41,7 @@ logger = LoggerJsonFile().logger
 
 
 class FaceAnalyzer(object):
-    @Timer(
+    #@Timer(
         &#34;FaceAnalyzer.__init__&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug
     )
     def __init__(self, cfg: OmegaConf):
@@ -100,7 +100,7 @@ class FaceAnalyzer(object):
                 self.cfg.utilizer[utilizer_name]
             )
 
-    @Timer(&#34;FaceAnalyzer.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
+    #@Timer(&#34;FaceAnalyzer.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
     def run(
         self,
         path_image: str,
@@ -242,7 +242,7 @@ It also draws bounding boxes and facial landmarks over the image.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class FaceAnalyzer(object):
-    @Timer(
+    #@Timer(
         &#34;FaceAnalyzer.__init__&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug
     )
     def __init__(self, cfg: OmegaConf):
@@ -301,7 +301,7 @@ It also draws bounding boxes and facial landmarks over the image.</p>
                 self.cfg.utilizer[utilizer_name]
             )
 
-    @Timer(&#34;FaceAnalyzer.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
+    #@Timer(&#34;FaceAnalyzer.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
     def run(
         self,
         path_image: str,
@@ -423,7 +423,7 @@ and returns analyzed data.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@Timer(&#34;FaceAnalyzer.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
+<pre><code class="python">#@Timer(&#34;FaceAnalyzer.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
 def run(
     self,
     path_image: str,

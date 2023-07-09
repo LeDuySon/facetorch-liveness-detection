@@ -30,3 +30,6 @@ return_img_data: True # bool
 path_output: data/output/test8.png # Optional[str]
 
 path_image_2: data/input/test3.jpg # str
+
+# fas path
+hist_model_path: ../models/print-attack_ycrcb_luv_extraTreesClassifier.pkl

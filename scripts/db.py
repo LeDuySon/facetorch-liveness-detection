@@ -50,7 +50,7 @@ class VectorDB():
         
         return operation_info
 
-    def verify_user(self, face_embedding: List[float], user_name: str, threshold: float = 0.7):
+    def verify_user(self, face_embedding: List[float], user_name: str, threshold: float = 0.5):
         search_result = self.client.search(
                 collection_name=self.col_name,
                 query_vector=face_embedding, 

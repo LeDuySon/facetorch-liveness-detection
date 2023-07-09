@@ -1,0 +1,14 @@
+FROM python:3.6-slim
+
+ENV WORKDIR=/opt/fas
+WORKDIR $WORKDIR
+
+# Run setup for opencv
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+
+COPY requirements_fas.txt ./
+RUN pip install -r requirements_fas.txt
+
+
+
+

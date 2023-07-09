@@ -40,7 +40,7 @@ logger = LoggerJsonFile().logger
 
 
 class BaseDetPreProcessor(BaseProcessor):
-    @Timer(
+    #@Timer(
         &#34;BaseDetPreProcessor.__init__&#34;,
         &#34;{name}: {milliseconds:.2f} ms&#34;,
         logger=logger.debug,
@@ -81,7 +81,7 @@ class BaseDetPreProcessor(BaseProcessor):
 
 
 class DetectorPreProcessor(BaseDetPreProcessor):
-    @Timer(
+    #@Timer(
         &#34;DetectorPreProcessor.__init__&#34;,
         &#34;{name}: {milliseconds:.2f} ms&#34;,
         logger=logger.debug,
@@ -105,7 +105,7 @@ class DetectorPreProcessor(BaseDetPreProcessor):
         super().__init__(transform, device, optimize_transform)
         self.reverse_colors = reverse_colors
 
-    @Timer(
+    #@Timer(
         &#34;DetectorPreProcessor.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug
     )
     def run(self, data: ImageData) -&gt; ImageData:
@@ -162,7 +162,7 @@ All subclass should overwrite:</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class BaseDetPreProcessor(BaseProcessor):
-    @Timer(
+    #@Timer(
         &#34;BaseDetPreProcessor.__init__&#34;,
         &#34;{name}: {milliseconds:.2f} ms&#34;,
         logger=logger.debug,
@@ -277,7 +277,7 @@ def run(self, data: ImageData) -&gt; ImageData:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class DetectorPreProcessor(BaseDetPreProcessor):
-    @Timer(
+    #@Timer(
         &#34;DetectorPreProcessor.__init__&#34;,
         &#34;{name}: {milliseconds:.2f} ms&#34;,
         logger=logger.debug,
@@ -301,7 +301,7 @@ def run(self, data: ImageData) -&gt; ImageData:
         super().__init__(transform, device, optimize_transform)
         self.reverse_colors = reverse_colors
 
-    @Timer(
+    #@Timer(
         &#34;DetectorPreProcessor.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug
     )
     def run(self, data: ImageData) -&gt; ImageData:
@@ -349,7 +349,7 @@ def run(self, data: ImageData) -&gt; ImageData:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@Timer(
+<pre><code class="python">#@Timer(
     &#34;DetectorPreProcessor.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug
 )
 def run(self, data: ImageData) -&gt; ImageData:

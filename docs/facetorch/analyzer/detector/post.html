@@ -43,7 +43,7 @@ logger = LoggerJsonFile().logger
 
 
 class BaseDetPostProcessor(BaseProcessor):
-    @Timer(
+    #@Timer(
         &#34;BaseDetPostProcessor.__init__&#34;,
         &#34;{name}: {milliseconds:.2f} ms&#34;,
         logger=logger.debug,
@@ -133,7 +133,7 @@ class PriorBox:
 
 
 class PostRetFace(BaseDetPostProcessor):
-    @Timer(&#34;PostRetFace.__init__&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
+    #@Timer(&#34;PostRetFace.__init__&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
     def __init__(
         self,
         transform: transforms.Compose,
@@ -176,7 +176,7 @@ class PostRetFace(BaseDetPostProcessor):
         self.reverse_colors = reverse_colors
         self.expand_pixels = expand_pixels
 
-    @Timer(&#34;PostRetFace.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
+    #@Timer(&#34;PostRetFace.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
     def run(
         self,
         data: ImageData,
@@ -370,7 +370,7 @@ All subclass should overwrite:</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class BaseDetPostProcessor(BaseProcessor):
-    @Timer(
+    #@Timer(
         &#34;BaseDetPostProcessor.__init__&#34;,
         &#34;{name}: {milliseconds:.2f} ms&#34;,
         logger=logger.debug,
@@ -627,7 +627,7 @@ def run(
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class PostRetFace(BaseDetPostProcessor):
-    @Timer(&#34;PostRetFace.__init__&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
+    #@Timer(&#34;PostRetFace.__init__&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
     def __init__(
         self,
         transform: transforms.Compose,
@@ -670,7 +670,7 @@ def run(
         self.reverse_colors = reverse_colors
         self.expand_pixels = expand_pixels
 
-    @Timer(&#34;PostRetFace.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
+    #@Timer(&#34;PostRetFace.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
     def run(
         self,
         data: ImageData,
@@ -857,7 +857,7 @@ def run(
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@Timer(&#34;PostRetFace.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
+<pre><code class="python">#@Timer(&#34;PostRetFace.run&#34;, &#34;{name}: {milliseconds:.2f} ms&#34;, logger=logger.debug)
 def run(
     self,
     data: ImageData,

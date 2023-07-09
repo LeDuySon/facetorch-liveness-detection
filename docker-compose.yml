@@ -1,39 +1,34 @@
 version: "3.3"
 services:
-
-  # Container for running the latest deployment
-  facetorch:
-    image: tomasgajarsky/facetorch:latest
+  # Container for development purposes
+  liveness-detection:
     platform: linux/amd64
+    # name: liveness-detector
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: ./docker/Dockerfile.dev
+    restart: always
+    tty: true
+    ports:
+      - "11322:11322"
     volumes:
-        - ./:/opt/facetorch
-    entrypoint: ["/bin/bash"]
+      - ./:/opt/facetorch
+    command: python3 ./scripts/app.py
+    # entrypoint: ["/bin/bash"]
+    depends_on:
+      - vectordb
+    networks:
+      - liveness-net
 
-  facetorch-gpu:
-    image: tomasgajarsky/facetorch-gpu:latest
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.gpu
+  vectordb:
+    # name: vectordb
+    image: qdrant/qdrant
+    restart: always
     volumes:
-        - ./:/opt/facetorch
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              device_ids: ["0"]
-              capabilities: [gpu]
-    entrypoint: ["/bin/bash"]
+      - ./data/qdrant_storage:/qdrant/storage
+    networks:
+      - liveness-net
 
-  facetorch-gpu-no-device:
-    image: tomasgajarsky/facetorch-gpu:latest
-    platform: linux/amd64
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.gpu
-    volumes:
-        - ./:/opt/facetorch
-    entrypoint: ["/bin/bash"]
+networks:
+  liveness-net:
+    driver: bridge 

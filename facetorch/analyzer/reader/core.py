@@ -35,7 +35,7 @@ class ImageReader(BaseReader):
                   transforms.PILToTensor()
               ])
 
-    @Timer("ImageReader.run", "{name}: {milliseconds:.2f} ms", logger=logger.debug)
+    # #@Timer("ImageReader.run", "{name}: {milliseconds:.2f} ms", logger=logger.debug)
     def run(self, path_image: str = None, image = None, fix_img_size: bool = False) -> ImageData:
         """Reads an image from a path and returns a tensor of the image with values between 0-255 and shape (batch, channels, height, width). The order of color channels is RGB. PyTorch and Torchvision are used to read the image.
 
